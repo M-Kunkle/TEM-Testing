@@ -20,13 +20,13 @@ tfdir = Path('Results 03_27_2024\Transfer Funcs')
 coupdir = Path('Results 03_27_2024\Coupling')
 
 ''' Signal Constants '''
-START_FREQ = .7e9
-STOP_FREQ = 2e9
+START_FREQ = .6e9
+STOP_FREQ = 2.1e9
 FS = 50e9
 AMPLITUDE = .5 # 250mV 
 WFM_TYPE = 2
 PULSE_WIDTH = 10e-9
-SIGNAL_SAMPLES = 5000
+SIGNAL_SAMPLES = 7000
 START_FILT = .9e9
 STOP_FILT = 2e9
 
@@ -42,16 +42,16 @@ awg_address = interface.get_address(TEK_AWG70001B, rm)
 oscope_address = interface.get_address(TEK_DPO71304SX, rm)
 scope, rm = interface.connect_scope(oscope_address, rm)
 awg = interface.awg_connect(awg_address)
-interface.trigger_setup_manual(scope, ch=3, level=.2, slope='RISE', rec_length=5000)
-interface.vertical_scale_reset(scope, ch=1, ycenter=0, ydiv=0.02, yoffset=0)
-interface.vertical_scale_reset(scope, ch=2, ycenter=0, ydiv=0.05, yoffset=0)
-interface.vertical_scale_reset(scope, ch=3, ycenter=0, ydiv=0.2, yoffset=0)
+interface.trigger_setup_manual(scope, ch=2, level=.2, slope='RISE', rec_length=7000)
+interface.vertical_scale_reset(scope, ch=3, ycenter=0, ydiv=0.02, yoffset=0)
+interface.vertical_scale_reset(scope, ch=4, ycenter=0, ydiv=0.05, yoffset=0)
+interface.vertical_scale_reset(scope, ch=2, ycenter=0, ydiv=0.2, yoffset=0)
 
 
 ''' Upload Excitation Signals '''
 wfm_num = input('Enter Waveform Number: ')
 # tf_fn = 'transferfunction' + wfm_num + '.csv'
-tf_fn = 'hec_last.csv'
+tf_fn = 'wfm4.csv'
 nb_fn = 'narrowband' + wfm_num + '.csv'
 tft,tf_sig = ut.read_cst_csv(tfdir / tf_fn,1)
 # tft = np.loadtxt(tfdir / tf_fn)
@@ -63,11 +63,11 @@ interface.capture_single_sequence(scope)
 interface.awg_fire(awg)
 time.sleep(1)
 
-tf_time, tf_DUT_wfm,_ = interface.get_waveform_from_scope(scope, ch=1)
-_, tf_TEM_wfm,_ = interface.get_waveform_from_scope(scope, ch=2)
+tf_time, tf_DUT_wfm,_ = interface.get_waveform_from_scope(scope, ch=3)
+_, tf_TEM_wfm,_ = interface.get_waveform_from_scope(scope, ch=4)
 
-filt_tfdut = sigs.wfm_filter(tf_time, np.squeeze(tf_DUT_wfm), .7e9, 2e9)
-filt_tftem = sigs.wfm_filter(tf_time, np.squeeze(tf_TEM_wfm), .7e9, 2e9)
+filt_tfdut = sigs.wfm_filter(tf_time, np.squeeze(tf_DUT_wfm), .6e9, 2.1e9)
+filt_tftem = sigs.wfm_filter(tf_time, np.squeeze(tf_TEM_wfm), .6e9, 2.1e9)
 ut.signal_plot(tf_time,np.squeeze(filt_tfdut),0,3e9,unit='V', titlestr='TF DUT ')
 ut.signal_plot(tf_time,np.squeeze(filt_tftem),0,3E9,unit='V', titlestr='TF TEM ')
 

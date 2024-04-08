@@ -43,10 +43,10 @@ scope, rm = interface.connect_scope(oscope_address, rm)
 awg = interface.awg_connect(awg_address)
 # scope.write('CLEAR ALL')
 
-interface.trigger_setup_manual(scope, ch=3, level=.2, slope='RISE', rec_length=5000)
-interface.vertical_scale_reset(scope, ch=1, ycenter=0, ydiv=0.00625, yoffset=0)
-interface.vertical_scale_reset(scope, ch=2, ycenter=0, ydiv=0.05, yoffset=0)
-interface.vertical_scale_reset(scope, ch=3, ycenter=0, ydiv=0.2, yoffset=0)
+interface.trigger_setup_manual(scope, ch=2, level=.2, slope='RISE', rec_length=5000)
+interface.vertical_scale_reset(scope, ch=3, ycenter=0, ydiv=0.00625, yoffset=0)
+interface.vertical_scale_reset(scope, ch=4, ycenter=0, ydiv=0.05, yoffset=0)
+interface.vertical_scale_reset(scope, ch=2, ycenter=0, ydiv=0.2, yoffset=0)
 
 ''' Generate Sinc and Activate AWG'''
 t, sig_int = sigs.wfm_generate(2, START_FREQ, STOP_FREQ, FS, PULSE_WIDTH, sample_count=5000)
@@ -56,9 +56,9 @@ interface.awg_fire(awg)
 time.sleep(1)
 
 ''' Download and Plot Oscope Waveforms'''
-DUT_t, DUT_wfm,_ = interface.get_waveform_from_scope(scope, ch=1)
+DUT_t, DUT_wfm,_ = interface.get_waveform_from_scope(scope, ch=3)
 # ut.signal_plot(DUT_t,np.squeeze(DUT_wfm),0,3e9,unit='V',titlestr='Oscope DUT ')
-TEM_t, TEM_wfm,_ = interface.get_waveform_from_scope(scope, ch=2)
+TEM_t, TEM_wfm,_ = interface.get_waveform_from_scope(scope, ch=4)
 ut.signal_plot(TEM_t,np.squeeze(TEM_wfm),0,3E9,unit='V',titlestr='Oscope TEM ')
 
 ''' Filter Waveform '''
